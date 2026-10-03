@@ -10,7 +10,8 @@ import threading
 
 
 class AudioSelector(QListWidget):
-    audio_fetched = pyqtSignal(AudioDefinition)
+    # (lookup id, definition): results from an older lookup are dropped
+    audio_fetched = pyqtSignal(int, object)
 
     def __init__(self) -> None:
         super().__init__()
@@ -30,6 +31,7 @@ class AudioSelector(QListWidget):
         self.current_audio_path = ""
         self.audios: dict[str, str] = {}
         self.sg: Optional[AudioSourceGroup] = None
+        self._lookup_id = 0
         self.audio_fetched.connect(self.appendDefinition)
         self.connect_signals()
 
@@ -41,16 +43,18 @@ class AudioSelector(QListWidget):
             return []
         return self.sg.define(word)
 
-    def lookup_on_thread(self, word: str):
-        self.clear()
-        for definition in self.getDefinitions(word):
-            self.audio_fetched.emit(definition)
+    def _define_online(self, lookup_id: int, sources: list, word: str) -> None:
+        "Runs on a worker thread; only talks to the GUI through the signal"
+        for source in sources:
+            for definition in source.define(word):
+                self.audio_fetched.emit(lookup_id, definition)
 
-    def appendDefinition(self, defi: AudioDefinition):
-        if defi.audios is None:
+    def appendDefinition(self, lookup_id: int, defi: AudioDefinition):
+        if lookup_id != self._lookup_id or defi.audios is None:
             return
+        new_names = [name for name in defi.audios if name not in self.audios]
         self.audios.update(defi.audios)
-        self.updateAudioUI()
+        self.updateAudioUI(new_names)
 
     def clear(self):
         super().clear()
@@ -58,17 +62,19 @@ class AudioSelector(QListWidget):
         self.current_audio_path = ""
 
     def lookup(self, word: str):
-        # check if all sources are online
-        if self.sg is not None:
-            all_online = all(not source.INTERNET for source in self.sg.sources)
-            if all_online:
-                # Use threads only if all online because sqlite cursor
-                # can't be accessed from multiple threads
-                threading.Thread(
-                    target=self.lookup_on_thread,
-                    args=(word,)).start()
-            else:
-                self.lookup_on_thread(word)
+        self.clear()
+        self._lookup_id += 1
+        if self.sg is None:
+            return
+        # Local sources share the main thread's sqlite cursor, so query them here (they are fast).
+        # Online sources can take seconds, so query them on a worker thread.
+        online = [source for source in self.sg.sources if source.INTERNET]
+        for source in self.sg.sources:
+            if not source.INTERNET:
+                for definition in source.define(word):
+                    self.appendDefinition(self._lookup_id, definition)
+        if online:
+            threading.Thread(target=self._define_online, args=(self._lookup_id, online, word), daemon=True).start()
 
     def play_audio_if_exists(self, x):
         if x is not None:
@@ -87,8 +93,8 @@ class AudioSelector(QListWidget):
         newSize = self.size() - self.discard_audio_button.size() - padding
         self.discard_audio_button.move(newSize.width(), 0)
 
-    def updateAudioUI(self):
-        for item in self.audios:
+    def updateAudioUI(self, new_names: list[str]):
+        for item in new_names:
             self.addItem("🔊 " + item)
         self.setCurrentItem(self.item(0))
 
