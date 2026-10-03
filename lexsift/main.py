@@ -1,14 +1,11 @@
 import csv
 import dataclasses
-import importlib.metadata
 import os
 import sys
 import time
 import re
 from datetime import datetime
 from typing import Optional, cast
-import requests
-from packaging import version
 import platform
 import json
 from loguru import logger
@@ -21,6 +18,8 @@ from PyQt5.QtWidgets import QApplication, QMessageBox, QAction, QShortcut, QFile
 import qdarktheme
 
 from .global_names import datapath, lock, app, settings  # First local import
+from . import __version__
+from .updates import fetch_newer_release
 from .analyzer import BookAnalyzer
 from .config import ConfigDialog
 from .stats import StatisticsWindow
@@ -54,7 +53,7 @@ from .uncaught_hook import ExceptionCatcher
 
 
 class MainWindow(MainWindowBase):
-    got_updates = pyqtSignal(list)
+    got_updates = pyqtSignal(dict)
     polled_clipboard_changed = pyqtSignal()
     polled_selection_changed = pyqtSignal()
 
@@ -78,10 +77,11 @@ class MainWindow(MainWindowBase):
         self.setupButtons()
         self.startServer()
         self.setupShortcuts()
+        # Connect before starting the check so a fast reply is not lost
+        self.got_updates.connect(self.gotUpdatesInfo)
         self.checkUpdatesOnThread()
         self.initSources()
         self.initTimers()
-        self.got_updates.connect(self.gotUpdatesInfo)
 
         self.setupClipboardMonitor()
         self.setMinimumWidth(settings.value("minimum_width", 550, type=int))
@@ -199,24 +199,20 @@ class MainWindow(MainWindowBase):
         print("Finished checking updates")
 
     def checkUpdates(self) -> None:
-        res = requests.get("https://api.github.com/repos/MichaelDolzani/Lexsift/releases", timeout=5)
-        data = res.json()
-        self.got_updates.emit(data)
+        if release := fetch_newer_release(__version__):
+            self.got_updates.emit(release)
 
-    def gotUpdatesInfo(self, data: dict) -> None:
-        latest_version = (current := data[0])['tag_name'].strip('v')
-        current_version = importlib.metadata.version('lexsift')
-        if version.parse(latest_version) > version.parse(current_version):
-            answer2 = QMessageBox.information(
-                None,
-                "New version",
-                "<h2>There is a new version available!</h2>"
-                + f"<h3>Version {latest_version}</h3>"
-                + markdown(current['body']),
-                buttons=QMessageBox.Open | QMessageBox.Ignore
-            )
-            if answer2 == QMessageBox.Open:
-                QDesktopServices.openUrl(QUrl(current['html_url']))
+    def gotUpdatesInfo(self, release: dict) -> None:
+        answer2 = QMessageBox.information(
+            None,
+            "New version",
+            "<h2>There is a new version available!</h2>"
+            + f"<h3>Version {release['tag_name'].lstrip('v')}</h3>"
+            + markdown(release.get('body') or ""),
+            buttons=QMessageBox.Open | QMessageBox.Ignore
+        )
+        if answer2 == QMessageBox.Open:
+            QDesktopServices.openUrl(QUrl(release['html_url']))
 
     def setupButtons(self) -> None:
         self.web_button.clicked.connect(self.onWebButton)
