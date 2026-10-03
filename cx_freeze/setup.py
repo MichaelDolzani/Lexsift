@@ -38,7 +38,8 @@ build_exe_options = {
         "lzo",
         "readmdict",
         "packaging",
-        "waitress"
+        "waitress",
+        "pydoc",  # imported by pyqtgraph.parametertree; cx_Freeze 8 leaves it out
     ],
     "include_files": include_files,
     "zip_include_packages": ["PyQt5"],
