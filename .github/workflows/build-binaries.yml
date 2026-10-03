@@ -35,14 +35,18 @@ jobs:
         sudo apt install -y liblzo2-dev zlib1g-dev
       if: ${{ matrix.os == 'ubuntu-latest' }}
     - name: Install lzo (macOS)
-      # Must come before pip install: python-lzo builds against it
-      run: brew install lzo
+      # Must come before pip install: python-lzo builds against it. It only looks in /usr or a bundled
+      # source folder, so point it at Homebrew, and build arm64 only since Homebrew's lzo is not universal
+      run: |
+        brew install lzo
+        echo "LZO_DIR=$(brew --prefix lzo)" >> "$GITHUB_ENV"
+        echo "ARCHFLAGS=-arch arm64" >> "$GITHUB_ENV"
       if: ${{ runner.os == 'macOS' }}
     - name: Install dependencies
       run: |
         pip install wheel
         pip install -r requirements.txt
-        pip install cx_freeze
+        pip install "cx_Freeze>=8.7,<9"
     - name: Build Windows App
       run: |
         cd cx_freeze

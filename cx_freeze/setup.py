@@ -54,13 +54,13 @@ WINDOWS_OUTPUT_NAME = f"Lexsift-v{__version__}-DEBUG-win64.msi"
 SCRIPT = "app.py"
 if sys.platform == "win32" and not os.environ.get("LEXSIFT_DEBUG_BUILD"):
     # If we are on a non-debug build on Windows, we want to use the GUI base to hide the console window
-    base = "Win32GUI"
+    base = "gui"
     WINDOWS_OUTPUT_NAME = f"Lexsift-v{__version__}-win64.msi"
     SCRIPT = "app_win32.py"
 
 bdist_msi_options = {
     "upgrade_code": "{F10E2AE2-7629-3CA2-AA85-498478E708D7}",
-    "target_name": WINDOWS_OUTPUT_NAME
+    "output_name": WINDOWS_OUTPUT_NAME
 }
 
 # x86_64 or arm64
