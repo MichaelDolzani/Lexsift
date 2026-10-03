@@ -21,6 +21,7 @@ import qdarktheme
 from .global_names import datapath, lock, app, settings  # First local import
 from . import __version__
 from .updates import fetch_newer_release
+from .vocabsieve_import import find_vocabsieve_profile, import_profile
 from .analyzer import BookAnalyzer
 from .config import ConfigDialog
 from .stats import StatisticsWindow
@@ -274,6 +275,7 @@ class MainWindow(MainWindowBase):
         self.import_kindle_vocab_action = QAction("K&indle lookups")
         self.import_auto_text_action = QAction("Auto import from text")
         self.import_wordlist_action = QAction("Import word list from file")
+        self.import_vocabsieve_action = QAction("&VocabSieve profile...")
 
         self.export_notes_csv_action = QAction("Export &notes to CSV")
         self.export_lookups_csv_action = QAction("Export &lookup data to CSV")
@@ -290,6 +292,7 @@ class MainWindow(MainWindowBase):
         self.import_koreader_vocab_action.triggered.connect(self.importKoreader)
         self.import_kindle_vocab_action.triggered.connect(self.importKindle)
         self.import_wordlist_action.triggered.connect(self.importWordlist)
+        self.import_vocabsieve_action.triggered.connect(self.importVocabSieveProfile)
         self.import_auto_text_action.triggered.connect(self.importAutoText)
         self.export_notes_csv_action.triggered.connect(self.exportNotes)
         self.export_lookups_csv_action.triggered.connect(self.exportLookups)
@@ -309,6 +312,8 @@ class MainWindow(MainWindowBase):
                 self.import_wordlist_action
             ]
         )
+        importmenu.addSeparator()
+        importmenu.addAction(self.import_vocabsieve_action)
 
         exportmenu.addActions(
             [
@@ -605,6 +610,13 @@ class MainWindow(MainWindowBase):
                 "Check if you've picked the right directory. It should be a folder containing both all of your books and KOReader settings.")
         except Exception as e:
             QMessageBox.warning(self, "Something went wrong", "Error: " + repr(e))
+
+    def importVocabSieveProfile(self) -> None:
+        if offer_vocabsieve_import(self, first_launch=False):
+            # Sources, records and the reader were set up from the old profile; start over cleanly
+            QMessageBox.information(self, "Restart Lexsift",
+                                    "Lexsift will now close. Start it again to use your VocabSieve data.")
+            self.close()
 
     def importWordlist(self) -> None:
         path = QFileDialog.getOpenFileName(
@@ -1105,12 +1117,54 @@ class MainWindow(MainWindowBase):
             self.thread2.start()
 
 
+def offer_vocabsieve_import(parent, first_launch: bool) -> bool:
+    """Ask whether to import the VocabSieve profile and do it. Returns True if it was imported.
+    On first launch, stays silent when there is no VocabSieve profile."""
+    profile = find_vocabsieve_profile(datapath)
+    if profile is None:
+        if not first_launch:
+            QMessageBox.information(parent, "Import VocabSieve profile",
+                                    "No VocabSieve profile was found on this computer.")
+        return False
+    answer = QMessageBox.question(
+        parent,
+        "Import VocabSieve profile",
+        "<h3>Import your VocabSieve profile?</h3>"
+        f"Found VocabSieve data ({profile.describe()}) in<br><code>{profile.datapath}</code><br><br>"
+        "This copies your VocabSieve settings, lookup history, notes, tracking data, imported dictionaries "
+        "and cached audio and images into Lexsift. Your current Lexsift settings and data are replaced; "
+        "a backup is saved first. VocabSieve itself is not changed.<br><br>"
+        "Close VocabSieve before importing."
+        + ("<br><br>You can also do this later from <i>Import → VocabSieve profile</i>." if first_launch else "")
+    )
+    if answer != QMessageBox.Yes:
+        return False
+    try:
+        report = import_profile(profile, settings, datapath)
+    except Exception as e:
+        logger.exception("VocabSieve import failed")
+        QMessageBox.critical(parent, "Import failed",
+                             f"Could not import the VocabSieve profile:<br>{e!r}<br><br>"
+                             "Your Lexsift profile was backed up before the import started, "
+                             f"in <code>{os.path.join(datapath, 'backups')}</code>.")
+        return False
+    QMessageBox.information(
+        parent, "VocabSieve profile imported",
+        f"Imported {report.settings_copied} settings and {', '.join(report.copied) or 'no data files'}.<br><br>"
+        f"Your previous Lexsift profile was backed up to<br><code>{report.backup_dir}</code>")
+    return True
+
+
 def main():
     # In Windows 11 QToolTip background color is not displayed correctly in dark theme.
     # To get the theme to work properly on Windows 11, add an additional qss that removes the border.
     # For whatever reason, this works and allows QT to render the tool boxes correctly.
     # See https://github.com/5yutan5/PyQtDarkTheme/issues/239 for more info.
     qss = "QToolTip { border: 0px; }" if sys.platform == "win32" else ""
+
+    # Offer to bring over a VocabSieve profile before anything reads the settings or records
+    if not settings.value("internal/configured"):
+        offer_vocabsieve_import(None, first_launch=True)
 
     if (theme := settings.value("theme", 'auto')) and theme != "system":
         if color := settings.value("accent_color"):

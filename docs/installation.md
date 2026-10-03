@@ -64,6 +64,22 @@ To run from source:
 
 For debugging purposes, set the environmental variable `LEXSIFT_DEBUG` to any value. This will create a separate profile (settings and databases for records and dictionaries) so you may perform tests without affecting your normal profile. For each different value of `LEXSIFT_DEBUG`, a separate profile is generated. This can be any number or string.
 
+## Moving from VocabSieve
+
+Lexsift is a fork of VocabSieve and can take over your VocabSieve profile. The first time you start Lexsift, it offers to import it if VocabSieve was used on the same computer. You can also do it later from **Import → VocabSieve profile...**.
+
+The import copies:
+
+- all settings, including your Anki deck, note type, field mapping and tags
+- your lookup history, notes and vocabulary tracking data (`records.db`)
+- your imported dictionaries (`dict.db`); the dictionary files themselves stay where they are
+- cached Forvo audio and images
+
+Your current Lexsift settings and data are replaced, and a backup of them is saved first in the `backups` folder of the Lexsift data folder (**Help → Open data folder**). VocabSieve itself is not changed, so you can keep using it.
+
+{: .note }
+Close VocabSieve before importing. Your note type keeps its name (`vocabsieve-notes`), so new cards go into the same Anki note type as your existing ones.
+
 ## AnkiConnect (Required for card creation)
 
 Download and install [Anki desktop](https://apps.ankiweb.net/) (Not mobile or Anki Universal). Skip if you already installed it.
