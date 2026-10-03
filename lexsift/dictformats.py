@@ -1,6 +1,5 @@
 from typing import TextIO
 from loguru import logger
-from readmdict import MDX
 from bidict import bidict
 import os
 import re
@@ -131,7 +130,18 @@ def dictinfo(path) -> dict[str, str]:
         raise NotImplementedError("Unsupported format" + basename + ext)
 
 
+class MissingDependencyError(ImportError):
+    "An optional dependency needed for a dictionary format is not installed"
+
+
 def parseMDX(path) -> dict[str, str]:
+    # readmdict needs python-lzo, which has no wheels on some platforms, so MDX support is optional
+    try:
+        from readmdict import MDX
+    except (ImportError, SystemExit) as e:  # readmdict raises SystemExit when python-lzo is missing
+        raise MissingDependencyError(
+            "MDX dictionaries need the optional 'readmdict' and 'python-lzo' packages. "
+            "Install them with: pip install 'lexsift[mdx]'") from e
     mdx = MDX(path)
     stylesheet_lines = mdx.header[b'StyleSheet'].decode().splitlines()
     stylesheet_map: dict[int, str] = {}
