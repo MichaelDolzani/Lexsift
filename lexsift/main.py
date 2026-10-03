@@ -1,4 +1,5 @@
 import csv
+from urllib.parse import quote
 import dataclasses
 import os
 import sys
@@ -666,7 +667,7 @@ class MainWindow(MainWindowBase):
         """Shows definitions of self.word.text() in wiktionoary in browser"""
 
         url = settings.value("custom_url",
-                             "https://en.wiktionary.org/wiki/@@@@").replace("@@@@", self.word.text())
+                             "https://en.wiktionary.org/wiki/@@@@").replace("@@@@", quote(self.word.text(), safe=''))
         QDesktopServices.openUrl(QUrl(url))
 
     def onReaderOpen(self) -> None:
