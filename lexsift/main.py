@@ -54,6 +54,7 @@ from .uncaught_hook import ExceptionCatcher
 
 class MainWindow(MainWindowBase):
     got_updates = pyqtSignal(dict)
+    known_data_ready = pyqtSignal()
     polled_clipboard_changed = pyqtSignal()
     polled_selection_changed = pyqtSignal()
 
@@ -79,6 +80,7 @@ class MainWindow(MainWindowBase):
         self.setupShortcuts()
         # Connect before starting the check so a fast reply is not lost
         self.got_updates.connect(self.gotUpdatesInfo)
+        self.known_data_ready.connect(lambda: self.status("Known data is ready"))
         self.checkUpdatesOnThread()
         self.initSources()
         self.initTimers()
@@ -425,10 +427,12 @@ class MainWindow(MainWindowBase):
 
     @pyqtSlot()
     def _refreshKnownData(self) -> None:
+        # Runs on the thread pool: the lock stops overlapping refreshes, and the
+        # status bar is only updated from the GUI thread through the signal
         with lock:
             self.known_data, self.known_metadata = self.rec.getKnownData()
             self.known_data_timestamp = time.time()
-            self.status("Known data is ready")
+        self.known_data_ready.emit()
 
     def exportWordData(self):
         path, _ = QFileDialog.getSaveFileName(
