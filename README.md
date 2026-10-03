@@ -3,6 +3,8 @@
 Lexsift is a fork of [VocabSieve](https://github.com/FreeLanguageTools/vocabsieve) by FreeLanguageTools,
 distributed under the GNU GPLv3. See [NOTICE.md](NOTICE.md) for what has changed.
 
+**Coming from VocabSieve?** Lexsift can import your VocabSieve settings, history, tracking data and dictionaries: it offers to on first launch, or use *Import → VocabSieve profile*. See [Moving from VocabSieve](https://michaeldolzani.github.io/Lexsift/installation.html#moving-from-vocabsieve).
+
 ## Manual
 
 [Lexsift manual](https://michaeldolzani.github.io/Lexsift/)
