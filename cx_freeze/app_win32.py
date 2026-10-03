@@ -34,5 +34,5 @@ sys.__stdin__ = dummyStream()
 
 
 if __name__ == "__main__":
-    from vocabsieve.main import main
+    from lexsift.main import main
     main()

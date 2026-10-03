@@ -1,11 +1,11 @@
-title: VocabSieve Manual
-description: Documentation of VocabSieve features and usage
+title: Lexsift Manual
+description: Documentation of Lexsift features and usage
 theme: just-the-docs
 
-url: https://docs.freelanguagetools.org/
+url: https://michaeldolzani.github.io
 
 aux_links:
-  VocabSieve homepage: https://github.com/FreeLanguageTools/vocabsieve
+  Lexsift homepage: https://github.com/MichaelDolzani/Lexsift
 
 callouts_level: quiet # or loud
 callouts:

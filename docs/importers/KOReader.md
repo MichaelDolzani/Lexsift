@@ -24,7 +24,7 @@ When reading, you can look up unknown words. There should be a button that says 
 ## Usage
 
 {: .note}
-VocabSieve will import your lookup history automatically to its database for statistics purposes. It is recommended that you make sure the device time on your ereader does not drift too much from the actual time.
+Lexsift will import your lookup history automatically to its database for statistics purposes. It is recommended that you make sure the device time on your ereader does not drift too much from the actual time.
 
 1. Select the "Import KOReader" from the dropdown menus. 
 2. Navigate to the root directory of your ereader, such that it contains both all the books you want to import and KOReader's settings folder. 
@@ -32,7 +32,7 @@ VocabSieve will import your lookup history automatically to its database for sta
 
 ## Troubleshooting
 ### Can't find my books
-Ensure that the language of your book is set correctly. VocabSieve filters so that it only shows books in your target language. Most books should have proper metadata for the language, but some may not.
+Ensure that the language of your book is set correctly. Lexsift filters so that it only shows books in your target language. Most books should have proper metadata for the language, but some may not.
  
 You can set the book language by navigating to the .sdr folder located next to your book file, and open `metadata.xxx.lua` with a text editor, and find the following section:
 

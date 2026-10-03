@@ -3,7 +3,7 @@ import os
 from bidict import bidict
 import re
 
-DEBUG_ENV = os.environ.get("VOCABSIEVE_DEBUG", "")
+DEBUG_ENV = os.environ.get("LEXSIFT_DEBUG", "")
 
 FORVO_HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'

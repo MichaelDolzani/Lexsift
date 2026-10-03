@@ -25,7 +25,7 @@ class ConfigDialog(QDialog):
                 and settings.value("target_language") is not None:
             settings.clear()
         settings.setValue("config_ver", 1)
-        self.setWindowTitle("Configure VocabSieve")
+        self.setWindowTitle("Configure Lexsift")
         self.initTabs()
         self.setupTabs()
 

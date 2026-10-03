@@ -22,17 +22,17 @@ The general rule of deciding what content to use is that it should be mostly com
 
 ## Tools
 
-Where do tools like VocabSieve come in? Tools help you improve the efficacy of your efforts in immersion. VocabSieve is intended to help you in your immersion in two ways:
+Where do tools like Lexsift come in? Tools help you improve the efficacy of your efforts in immersion. Lexsift is intended to help you in your immersion in two ways:
 - Increasing comprehensibility by helping you look up the meaning of words during immersion.
 - Increasing your learning speed by committing new knowledge into a [spaced repetition](https://en.wikipedia.org/wiki/Spaced_repetition) system (SRS), such as [Anki](https://apps.ankiweb.net/). 
 
 Spaced repetition is a highly efficient learning technique that helps you memorize material with minimum effort by testing you at increasing intervals. As an adult with limited time, spaced repetition allows you to acquire words and phrases more easily than you could otherwise, while only immersing a few hours each day (rather than the whole day as a child). 
 
-Note: Although Anki is not technically required for VocabSieve to work, it is best used with Anki. [Anki setup guide](https://docs.ankiweb.net/getting-started.html)
+Note: Although Anki is not technically required for Lexsift to work, it is best used with Anki. [Anki setup guide](https://docs.ankiweb.net/getting-started.html)
 
 ## Free software
 
-VocabSieve is [free](https://www.gnu.org/philosophy/free-sw.html) and open source software. This means you are able to view its source code and use it for whatever purpose you like, including modifying and redistributing it, so long as you also distribute the modified source code under the GPLv3 license. More importantly for most users, however, it means that you own your data. Your data is never sent to any remote server I operate, and you don't need to be afraid that the company behind the software will one day fold, taking all of your learning tools with you, or simply making the product worse to extract more money out of you. There is no subscription you need to pay because there is essentially no running cost I have to pay to keep the servers on.  
+Lexsift is [free](https://www.gnu.org/philosophy/free-sw.html) and open source software. This means you are able to view its source code and use it for whatever purpose you like, including modifying and redistributing it, so long as you also distribute the modified source code under the GPLv3 license. More importantly for most users, however, it means that you own your data. Your data is never sent to any remote server I operate, and you don't need to be afraid that the company behind the software will one day fold, taking all of your learning tools with you, or simply making the product worse to extract more money out of you. There is no subscription you need to pay because there is essentially no running cost I have to pay to keep the servers on.  
 
 ## Further reading
 

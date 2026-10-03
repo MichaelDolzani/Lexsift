@@ -4,9 +4,9 @@ layout: default
 nav_order: 7
 ---
 
-# Resources for VocabSieve
+# Resources for Lexsift
 
-VocabSieve supports a range of different local resources, which you can use without an internet connection. 
+Lexsift supports a range of different local resources, which you can use without an internet connection. 
 ## Supported files
 - StarDict, the most commonly available free dictionary format online
 - Migaku (.json)
@@ -16,7 +16,7 @@ VocabSieve supports a range of different local resources, which you can use with
 - DSL
 - MDX
     > {: .note}
-    MDX dictionaries are often in heavy HTML format for style, but VocabSieve can only handle text-based definitions. They are converted into text before being shown, which may not always work well.
+    MDX dictionaries are often in heavy HTML format for style, but Lexsift can only handle text-based definitions. They are converted into text before being shown, which may not always work well.
 - JSON frequency lists (as a simple list of words in json format) 
 - Sound libraries (a directory of audio files)
 
@@ -31,7 +31,7 @@ High-quality parsed data of Wiktionary in various languages. Prefer these over t
 
 ### Hu Zheng (StarDict author) personal website, over 100 dictionaries
 
-StarDict dictionaries converted by StarDict's author from various formats. They are usually of decent quality and is plaintext, which is suitable for display in VocabSieve and Anki. StarDicts need to be extracted first before importing. Select the .ifo file in the extracted folder.
+StarDict dictionaries converted by StarDict's author from various formats. They are usually of decent quality and is plaintext, which is suitable for display in Lexsift and Anki. StarDicts need to be extracted first before importing. Select the .ifo file in the extracted folder.
 
 The website has been dead on a while, but many of the files are archived on Wayback Machine:
 
@@ -78,7 +78,7 @@ Lemmatized Russian frequency list
 <https://github.com/FreeLanguageTools/resources/raw/master/freq/freq_ru.json.gz>
 
 ## Cognate data
-CogNet processed data processed for VocabSieve, includes all languages, may take a while to import.
+CogNet processed data processed for Lexsift, includes all languages, may take a while to import.
 
 <https://github.com/FreeLanguageTools/resources/raw/master/cognates.json.gz>
 

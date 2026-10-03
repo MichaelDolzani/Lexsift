@@ -28,7 +28,7 @@ Go to Help->View session logs, paste the log here. **Be sure to redact out any s
 
 **Desktop (please complete the following information):**
  - OS: 
-- Vocabsieve version (if nightly, must be latest):
+- Lexsift version (if nightly, must be latest):
 
 **Additional context**
 Add any other context about the problem here.

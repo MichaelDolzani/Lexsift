@@ -35,7 +35,7 @@ class ContentManager(QDialog):
     def setupWidgets(self):
         self._layout = QVBoxLayout(self)
         label = QLabel(
-            "Vocabsieve supports tracking your progress by recording content you read. Add content here when you finish reading them")
+            "Lexsift supports tracking your progress by recording content you read. Add content here when you finish reading them")
         label.setWordWrap(True)
         self._layout.addWidget(label)
         self._layout.addWidget(self.tview)
