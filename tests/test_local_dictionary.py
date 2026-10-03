@@ -1,4 +1,4 @@
-from vocabsieve.local_dictionary import LocalDictionary
+from lexsift.local_dictionary import LocalDictionary
 
 
 def test_local_dictionary(tmp_path):

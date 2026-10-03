@@ -6,7 +6,7 @@ on: push
 jobs:
   deploy:
     env:
-      VOCABSIEVE_DEBUG_BUILD: ${{ github.ref_type != 'tag' && 'yes' || '' }} # Set to 'yes' if not a tag
+      LEXSIFT_DEBUG_BUILD: ${{ github.ref_type != 'tag' && 'yes' || '' }} # Set to 'yes' if not a tag
     strategy:
       matrix:
         os: [windows-latest, macos-13, ubuntu-latest, self-hosted]
@@ -41,10 +41,10 @@ jobs:
     - name: Build Linux AppImage
       run: |
         pip install python-appimage
-        cp vocabsieve.{desktop,png} recipe/
+        cp lexsift.{desktop,png} recipe/
         echo $(pwd) | cat - recipe/requirements.txt > tmpfile && mv tmpfile recipe/requirements.txt
         python -m python_appimage build app -p 3.11 recipe
-        mv VocabSieve-x86_64.AppImage VocabSieve-v$(grep version setup.cfg | awk '{print $3}')-linux-amd64.AppImage
+        mv Lexsift-x86_64.AppImage Lexsift-v$(grep version setup.cfg | awk '{print $3}')-linux-amd64.AppImage
       if: ${{ matrix.os == 'ubuntu-latest' }}
     - name: Upload artifact
       uses: actions/upload-artifact@v4

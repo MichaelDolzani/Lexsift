@@ -177,7 +177,7 @@ def getVersion(server) -> str:
 def addDefaultModel(server):
     return invoke('createModel',
                   server,
-                  modelName="vocabsieve-notes",
+                  modelName="lexsift-notes",
                   inOrderFields=FIELDS,
                   css=CSS,
                   cardTemplates=CARDS

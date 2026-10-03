@@ -5,15 +5,15 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleDisplayName</key>
-	<string>vocabsieve</string>
+	<string>lexsift</string>
 	<key>CFBundleExecutable</key>
 	<string>app</string>
 	<key>CFBundleName</key>
-	<string>VocabSieve</string>
+	<string>Lexsift</string>
 	<key>CFBundleIconFile</key>
 	<string>icon.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>vocabsieve</string>
+	<string>lexsift</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>NSHighResolutionCapable</key>

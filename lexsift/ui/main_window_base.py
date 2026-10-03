@@ -114,7 +114,7 @@ class MainWindowBase(QMainWindow):
 
         self.single_word = QCheckBox("Single word lookups")
         self.single_word.setToolTip(
-            "If enabled, vocabsieve will act as a quick dictionary and look up any single words copied to the clipboard.\n"
+            "If enabled, lexsift will act as a quick dictionary and look up any single words copied to the clipboard.\n"
             "This can potentially send your clipboard contents over the network if an online dictionary service is used.\n"
             "This is INSECURE if you use password managers that copy passwords to the clipboard.")
         self.lookup_definition_on_doubleclick = QCheckBox(
@@ -206,7 +206,7 @@ class MainWindowBase(QMainWindow):
         self._layout = layout
 
     def onHelp(self) -> None:
-        url = f"https://docs.freelanguagetools.org/"
+        url = f"https://michaeldolzani.github.io/Lexsift/"
         QDesktopServices.openUrl(QUrl(url))
 
     def onAbout(self) -> None:
@@ -220,7 +220,7 @@ class MainWindowBase(QMainWindow):
     def getAnkiSettings(self) -> AnkiSettings:
         return AnkiSettings(
             deck=settings.value("deck_name", "Default"),
-            model=settings.value("note_type", "vocabsieve-notes"),
+            model=settings.value("note_type", "lexsift-notes"),
             word_field=settings.value("word_field", "Word"),
             sentence_field=settings.value("sentence_field", "Sentence"),
             definition1_field=settings.value("definition1_field", "Definition"),

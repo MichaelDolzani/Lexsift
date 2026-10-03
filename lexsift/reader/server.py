@@ -8,13 +8,13 @@ from ..global_names import settings
 from .utils import getEpubMetadata
 from PyQt5.QtCore import QCoreApplication, QObject
 DEBUGGING = None
-if os.environ.get("VOCABSIEVE_DEBUG"):
+if os.environ.get("LEXSIFT_DEBUG"):
     DEBUGGING = True
     QCoreApplication.setApplicationName(
-        "VocabSieve" + os.environ.get("VOCABSIEVE_DEBUG", ""))
+        "Lexsift" + os.environ.get("LEXSIFT_DEBUG", ""))
 else:
-    QCoreApplication.setApplicationName("VocabSieve")
-QCoreApplication.setOrganizationName("FreeLanguageTools")
+    QCoreApplication.setApplicationName("Lexsift")
+QCoreApplication.setOrganizationName("Lexsift")
 
 app = Flask(__name__)
 

@@ -6,11 +6,11 @@ from .base_tab import BaseTab
 class NetworkTab(BaseTab):
     def initWidgets(self):
         self.check_updates = QCheckBox("Check for updates")
-        self.reader_enabled = QCheckBox("Enable VocabSieve Web Reader")
+        self.reader_enabled = QCheckBox("Enable Lexsift Web Reader")
         self.reader_host = QLineEdit()
         self.reader_port = QSpinBox()
         self.gtrans_api = QLineEdit()
-        #self.api_enabled = QCheckBox("Enable VocabSieve local API")
+        #self.api_enabled = QCheckBox("Enable Lexsift local API")
         #self.api_host = QLineEdit()
         #self.api_port = QSpinBox()
         #self.api_port.setMinimum(1024)

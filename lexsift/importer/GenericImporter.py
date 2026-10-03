@@ -203,8 +203,8 @@ class GenericImporter(QDialog):
                     audio_path = audios[next(iter(audios))]
 
             tags = []
-            if settings.value("tags", "vocabsieve").strip():
-                tags.extend(settings.value("tags", "vocabsieve").strip().split())
+            if settings.value("tags", "lexsift").strip():
+                tags.extend(settings.value("tags", "lexsift").strip().split())
             tags.append(self.methodname)
             tags.append(note.book_name.replace(" ", "_"))
 

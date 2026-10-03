@@ -18,7 +18,7 @@ def _get_debug_description():
     return "(debug=" + DEBUG_ENV + ")"
 
 
-title_prefix = "VocabSieve"
+title_prefix = "Lexsift"
 
 
 def app_title(include_version: bool):
@@ -37,7 +37,7 @@ if platform.system() == "Darwin":
 else:
     MOD = "Ctrl"
 
-app_organization = "FreeLanguageTools"
+app_organization = "Lexsift"
 
 
 def _get_settings_app_title():

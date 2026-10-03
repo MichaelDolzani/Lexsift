@@ -31,11 +31,11 @@ class AnkiTab(BaseTab):
         self.pronunciation_field = QComboBox()
         self.image_field = QComboBox()
         self.default_notetype_button = QPushButton(
-            "Use default note type ('vocabsieve-notes', will be created if it does not exist)")
+            "Use default note type ('lexsift-notes', will be created if it does not exist)")
 
     def setupWidgets(self):
         self.default_notetype_button.setToolTip(
-            "This will use the default note type provided by VocabSieve. It will be created if it does not exist.")
+            "This will use the default note type provided by Lexsift. It will be created if it does not exist.")
         self.default_notetype_button.clicked.connect(self.onDefaultNoteType)
 
     def loadDecks(self):
@@ -147,7 +147,7 @@ class AnkiTab(BaseTab):
             logger.error(e)
         self.loadDecks()
         self.loadFields()
-        self.note_type.setCurrentText("vocabsieve-notes")
+        self.note_type.setCurrentText("lexsift-notes")
         self.sentence_field.setCurrentText("Sentence")
         self.word_field.setCurrentText("Word")
         self.definition1_field.setCurrentText("Definition")
@@ -226,8 +226,8 @@ class AnkiTab(BaseTab):
             self.loadFields()
             self.register_config_handler(
                 self.deck_name, 'deck_name', 'Default')
-            self.register_config_handler(self.tags, 'tags', 'vocabsieve')
-            self.register_config_handler(self.note_type, 'note_type', 'vocabsieve-notes')
+            self.register_config_handler(self.tags, 'tags', 'lexsift')
+            self.register_config_handler(self.note_type, 'note_type', 'lexsift-notes')
             self.register_config_handler(
                 self.sentence_field, 'sentence_field', 'Sentence')
             self.register_config_handler(self.word_field, 'word_field', 'Word')

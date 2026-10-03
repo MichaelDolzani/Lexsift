@@ -28,7 +28,7 @@ class LogView(QDialog):
 
         self._layout = QVBoxLayout()
 
-        message = f'''VocabSieve version: {__version__}
+        message = f'''Lexsift version: {__version__}
 Python version: {sys.version} on {platform.system()} {platform.release()} {platform.machine()}
 PyQt5 (Qt bindings) version: {PYQT_VERSION_STR}, Qt {QT_VERSION_STR}\n\n'''
         message_label = QLabel(message)

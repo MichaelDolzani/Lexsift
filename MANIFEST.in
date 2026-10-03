@@ -1,5 +1,6 @@
-graft vocabsieve/
-prune vocabsieve/__pycache__/
-prune vocabsieve/__pycache__/
-prune vocabsieve/reader/__pycache__/
-prune vocabsieve/importer/__pycache__/
+graft lexsift/
+prune lexsift/__pycache__/
+prune lexsift/__pycache__/
+prune lexsift/reader/__pycache__/
+prune lexsift/importer/__pycache__/
+include NOTICE.md LICENSE

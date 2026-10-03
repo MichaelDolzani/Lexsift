@@ -1,20 +1,20 @@
 import sys
 import os
 import platform
-from vocabsieve import __version__
+from lexsift import __version__
 from cx_Freeze import setup, Executable  # pylint: disable=import-error
 
 # Dependencies are automatically detected, but it might need fine tuning.
 # "packages": ["os"] is used as example only
 include_files = [
-    ('../vocabsieve/reader/templates/',
-     'lib/vocabsieve/reader/templates/'),
-    ('../vocabsieve/reader/static/',
-     'lib/vocabsieve/reader/static/')]
+    ('../lexsift/reader/templates/',
+     'lib/lexsift/reader/templates/'),
+    ('../lexsift/reader/static/',
+     'lib/lexsift/reader/static/')]
 
 build_exe_options = {
     "includes": [
-        "vocabsieve",
+        "lexsift",
         "setuptools",
         "bs4",
         "lxml",
@@ -50,12 +50,12 @@ build_exe_options = {
 
 # base="Win32GUI" should be used only for Windows GUI app
 base = None
-WINDOWS_OUTPUT_NAME = f"VocabSieve-v{__version__}-DEBUG-win64.msi"
+WINDOWS_OUTPUT_NAME = f"Lexsift-v{__version__}-DEBUG-win64.msi"
 SCRIPT = "app.py"
-if sys.platform == "win32" and not os.environ.get("VOCABSIEVE_DEBUG_BUILD"):
+if sys.platform == "win32" and not os.environ.get("LEXSIFT_DEBUG_BUILD"):
     # If we are on a non-debug build on Windows, we want to use the GUI base to hide the console window
     base = "Win32GUI"
-    WINDOWS_OUTPUT_NAME = f"VocabSieve-v{__version__}-win64.msi"
+    WINDOWS_OUTPUT_NAME = f"Lexsift-v{__version__}-win64.msi"
     SCRIPT = "app_win32.py"
 
 bdist_msi_options = {
@@ -68,19 +68,19 @@ PLATFORM_MACHINE_NAME = platform.machine()
 
 bdist_mac_options = {
     'iconfile': "icon.icns",
-    'bundle_name': f"VocabSieve",
+    'bundle_name': f"Lexsift",
     'custom_info_plist': 'Info.plist',
 }
 
 bdist_dmg_options = {
-    'volume_label': f"VocabSieve-v{__version__}-macos-" + PLATFORM_MACHINE_NAME,
+    'volume_label': f"Lexsift-v{__version__}-macos-" + PLATFORM_MACHINE_NAME,
     'applications_shortcut': True,
 
 }
 
 
 setup(
-    name="VocabSieve",
+    name="Lexsift",
     version=__version__,
     description="Anki companion for language learning",
     options={
@@ -92,6 +92,6 @@ setup(
     executables=[Executable(SCRIPT,
                             base=base,
                             icon="icon.ico",
-                            shortcut_name="VocabSieve",
+                            shortcut_name="Lexsift",
                             shortcut_dir="DesktopFolder")]
 )

@@ -183,9 +183,9 @@ class MainWindow(MainWindowBase):
             answer = QMessageBox.question(
                 None,
                 "Check updates",
-                "<h2>Would you like VocabSieve to check for updates automatically on launch?</h2>"
+                "<h2>Would you like Lexsift to check for updates automatically on launch?</h2>"
                 "Currently, the repository and releases are hosted on GitHub's servers, "
-                "which will be queried for checking updates. <br>VocabSieve cannot and "
+                "which will be queried for checking updates. <br>Lexsift cannot and "
                 "<strong>will not</strong> install any updates automatically."
                 "<br>You can change this option in the configuration panel at any time."
             )
@@ -199,13 +199,13 @@ class MainWindow(MainWindowBase):
         print("Finished checking updates")
 
     def checkUpdates(self) -> None:
-        res = requests.get("https://api.github.com/repos/FreeLanguageTools/vocabsieve/releases", timeout=5)
+        res = requests.get("https://api.github.com/repos/MichaelDolzani/Lexsift/releases", timeout=5)
         data = res.json()
         self.got_updates.emit(data)
 
     def gotUpdatesInfo(self, data: dict) -> None:
         latest_version = (current := data[0])['tag_name'].strip('v')
-        current_version = importlib.metadata.version('vocabsieve')
+        current_version = importlib.metadata.version('lexsift')
         if version.parse(latest_version) > version.parse(current_version):
             answer2 = QMessageBox.information(
                 None,
@@ -390,7 +390,7 @@ class MainWindow(MainWindowBase):
             "Save known words to JSON file",
             os.path.join(
                 QStandardPaths.writableLocation(QStandardPaths.DesktopLocation),
-                f"vocabsieve-known-words-{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.json"
+                f"lexsift-known-words-{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.json"
             ),
             "JSON (*.json)"
         )
@@ -440,7 +440,7 @@ class MainWindow(MainWindowBase):
             "Save word scores to JSON file",
             os.path.join(
                 QStandardPaths.writableLocation(QStandardPaths.DesktopLocation),
-                f"vocabsieve-word-scores-{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.json"
+                f"lexsift-word-scores-{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.json"
             ),
             "JSON (*.json)"
         )
@@ -479,7 +479,7 @@ class MainWindow(MainWindowBase):
             "Save CSV to file",
             os.path.join(
                 QStandardPaths.writableLocation(QStandardPaths.DesktopLocation),
-                f"vocabsieve-notes-{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.csv"
+                f"lexsift-notes-{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.csv"
             ),
             "CSV (*.csv)"
         )
@@ -503,7 +503,7 @@ class MainWindow(MainWindowBase):
             "Save CSV to file",
             os.path.join(
                 QStandardPaths.writableLocation(QStandardPaths.DesktopLocation),
-                f"vocabsieve-lookups-{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.csv"
+                f"lexsift-lookups-{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.csv"
             ),
             "CSV (*.csv)"
         )
@@ -518,7 +518,7 @@ class MainWindow(MainWindowBase):
             writer.writerows(self.rec.getAllLookups())
 
     def onHelp(self) -> None:
-        url = f"https://docs.freelanguagetools.org/"
+        url = f"https://michaeldolzani.github.io/Lexsift/"
         QDesktopServices.openUrl(QUrl(url))
 
     def checkAnkiConnect(self) -> int:
@@ -803,7 +803,7 @@ class MainWindow(MainWindowBase):
             LookupRecord(
                 word=target,
                 language=self.getLanguage(),
-                source="vocabsieve"
+                source="lexsift"
             )
         )
         if self.known_data:
@@ -977,7 +977,7 @@ class MainWindow(MainWindowBase):
             definition2=self.definition2.toAnki(),
             audio_path=self.audio_selector.current_audio_path,
             image=self.image_path,
-            tags=settings.value("tags", "vocabsieve").strip().split() + self.tags.text().strip().split()
+            tags=settings.value("tags", "lexsift").strip().split() + self.tags.text().strip().split()
         )
 
         content = prepareAnkiNoteDict(anki_settings, note)

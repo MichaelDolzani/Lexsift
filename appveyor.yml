@@ -62,11 +62,11 @@ for:
       - "$HOME/$PYTHON_MAC/bin/python -m pip install -r requirements.txt"
       - "$HOME/$PYTHON_MAC/bin/python -m pip install cx_freeze"
       - "cd cx_freeze/mac"
-      - "$HOME/$PYTHON_MAC/bin/python setup.py bdist_mac --iconfile ../icon.icns --bundle-name=vocabsieve --custom-info-plist ../Info.plist -q"
+      - "$HOME/$PYTHON_MAC/bin/python setup.py bdist_mac --iconfile ../icon.icns --bundle-name=lexsift --custom-info-plist ../Info.plist -q"
       - "npm i -g create-dmg"
       - "cd build"
-      - "create-dmg vocabsieve.app || true"
-      - "mv \"vocabsieve undefined.dmg\" vocabsieve-$APPVEYOR_REPO_TAG_NAME-macos.dmg"
+      - "create-dmg lexsift.app || true"
+      - "mv \"lexsift undefined.dmg\" lexsift-$APPVEYOR_REPO_TAG_NAME-macos.dmg"
       - "cd ../.."
 
     artifacts:
@@ -83,13 +83,13 @@ for:
     install:
       - "sudo apt install -y liblzo2-dev zlib1g-dev"
       - "$HOME/$PYTHON_UBU/bin/python -m pip install python-appimage"
-      - "cp vocabsieve.{desktop,png} recipe/"
+      - "cp lexsift.{desktop,png} recipe/"
       - "echo $(pwd)"
       - "echo $(pwd) | cat - recipe/requirements.txt > tmpfile && mv tmpfile recipe/requirements.txt"
       - "$HOME/$PYTHON_UBU/bin/python -m python_appimage build app -p 3.10 recipe"
       - "ls"
       - "echo $(grep version setup.cfg | awk '{print $3}')"
-      - "mv VocabSieve-x86_64.AppImage VocabSieve-v$(grep version setup.cfg | awk '{print $3}')-linux-amd64.AppImage"
+      - "mv Lexsift-x86_64.AppImage Lexsift-v$(grep version setup.cfg | awk '{print $3}')-linux-amd64.AppImage"
 
     artifacts:
       - path: "*.AppImage"

@@ -31,7 +31,7 @@ class DictManager(QDialog):
         self.tview.setHeaderLabels(["Name", "Type", "Language", "Headwords"])
         self.open_resources_manual_page = QPushButton("Open Resources page in browser")
         self.open_resources_manual_page.clicked.connect(
-            lambda: QDesktopServices.openUrl(QUrl("https://docs.freelanguagetools.org/resources.html")))
+            lambda: QDesktopServices.openUrl(QUrl("https://michaeldolzani.github.io/Lexsift/resources.html")))
         self.add_dict = QPushButton("Import dictionary, frequency list, or cognate data...")
         self.add_dict.clicked.connect(self.onAdd)
         self.add_audio = QPushButton(
@@ -55,7 +55,7 @@ to be reimported, otherwise this operation will fail.\
             QLabel(
                 "<strong>Note</strong>: "
                 "<strong>Do not</strong> delete any files after importing them!<br>"
-                "VocabSieve does not store a copy of these files; it only indexes and caches them.<br>"
+                "Lexsift does not store a copy of these files; it only indexes and caches them.<br>"
                 "If you delete the files, your dictionaries will disappear when the database is rebuilt."))
         self._layout.addWidget(self.open_resources_manual_page)
         self._layout.addWidget(self.tview)

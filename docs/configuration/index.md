@@ -8,11 +8,11 @@ has_children: true
 # Configuration
 
 {: .note}
-Before opening the configuration panel, it is recommended to have Anki with AnkiConnect installed open so you can access all settings. If you did not do this before first opening VocabSieve, you can just close the configuration window and open it again by pressing the button on the bottom of the window after you started Anki.
+Before opening the configuration panel, it is recommended to have Anki with AnkiConnect installed open so you can access all settings. If you did not do this before first opening Lexsift, you can just close the configuration window and open it again by pressing the button on the bottom of the window after you started Anki.
 
 ## Generally required settings
 
-VocabSieve is meant to have sane defaults, so that only minimal configuration is required to start using it, but a few things are still necessary. The configuration window will pop up when you first open it. 
+Lexsift is meant to have sane defaults, so that only minimal configuration is required to start using it, but a few things are still necessary. The configuration window will pop up when you first open it. 
 
 1. On the first tab, select a target language from the list.
 2. Then, select at least one dictionary in the Source tab by dragging an item from the right box to the left. Dictionaries can be removed by dragging it out of the left box.
@@ -28,6 +28,6 @@ VocabSieve is meant to have sane defaults, so that only minimal configuration is
 
 7. (Generally not required) Select fields to populate with sentence, word, definitions, images, and pronunciation.
     > {: .highlight}
-    By default, VocabSieve will generate a new note type for you to be used with the tool to minimize required setup, so the fields should be populated by default. But if you would like to use your own, match the note type and data fields into note fields. To do this you must have a note type with at least three fields, one each for Sentence, Word, and Definition. 
+    By default, Lexsift will generate a new note type for you to be used with the tool to minimize required setup, so the fields should be populated by default. But if you would like to use your own, match the note type and data fields into note fields. To do this you must have a note type with at least three fields, one each for Sentence, Word, and Definition. 
 
 You're done! Now you are ready to mine sentences.
