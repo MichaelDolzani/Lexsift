@@ -5,7 +5,7 @@ from PyQt5.QtGui import QDesktopServices
 import time
 from ..constants import langcodes
 from ..dictionary import getDictsForLang, getFreqlistsForLang, getAudioDictsForLang
-from ..dictformats import supported_dict_formats, dictinfo
+from ..dictformats import supported_dict_formats, dictinfo, MissingDependencyError
 import json
 from ..tools import profile
 from ..global_names import settings
@@ -72,21 +72,28 @@ to be reimported, otherwise this operation will fail.\
         n_dicts = len(dicts)
         failed_reads = []
         failed_errors = []
+        kept_dicts = []
         for (i, item) in enumerate(dicts):
             try:
                 self.status(f"Rebuilding database: dictionary ({i+1}/{n_dicts})"
                             ".. this can take a while.")
                 QCoreApplication.processEvents()
                 dictdb.dictimport(item['path'], item['type'], item['lang'], item['name'])
+                kept_dicts.append(item)
+            except MissingDependencyError as e:
+                # Keep the dictionary: it will import once the dependency is installed
+                kept_dicts.append(item)
+                failed_reads.append(item['name'])
+                failed_errors.append("\tError:" + str(e))
             except Exception as e:
                 # Delete dictionary if read fails
                 failed_reads.append(item['name'])
                 failed_errors.append("\tError:" + repr(e))
-                del dicts[i]
-                settings.setValue("custom_dicts", json.dumps(dicts))
+        settings.setValue("custom_dicts", json.dumps(kept_dicts))
         dictdb.makeIndex()
         failures = [name + ": Error: " + error for name, error in zip(failed_reads, failed_errors)]
-        failed_msg = ("\nThe following dictionaries could not be imported, and have been removed: \n"
+        failed_msg = ("\nThe following dictionaries could not be imported. Unreadable ones have been removed; "
+                      "ones missing an optional package have been kept: \n"
                       + "\n\t".join(failures) if failures else "")
 
         QMessageBox.information(self, "Database rebuilt",
@@ -239,11 +246,15 @@ class AddDictDialog(QDialog):
             )
             return
 
-        dictdb.dictimport(
-            self.path,
-            supported_dict_formats.inverse[self.type.currentText()],
-            lang,
-            self.name.text())
+        try:
+            dictdb.dictimport(
+                self.path,
+                supported_dict_formats.inverse[self.type.currentText()],
+                lang,
+                self.name.text())
+        except MissingDependencyError as e:
+            self.warn(str(e))
+            return
         dicts.append({"name": self.name.text(),
                       "type": supported_dict_formats.inverse[self.type.currentText()],
                       "path": self.path,

@@ -1,15 +1,27 @@
 name: Build Binaries
 
-on: push
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
 
+permissions:
+  contents: write  # for the draft release on tags
 
 jobs:
   deploy:
     env:
       LEXSIFT_DEBUG_BUILD: ${{ github.ref_type != 'tag' && 'yes' || '' }} # Set to 'yes' if not a tag
     strategy:
+      fail-fast: false
       matrix:
-        os: [windows-latest, macos-13, ubuntu-latest, self-hosted]
+        include:
+          - os: windows-latest
+            label: Windows
+          - os: macos-14
+            label: MacOS (Apple Silicon)
+          - os: ubuntu-latest
+            label: Linux
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v4
@@ -22,6 +34,10 @@ jobs:
       run: |
         sudo apt install -y liblzo2-dev zlib1g-dev
       if: ${{ matrix.os == 'ubuntu-latest' }}
+    - name: Install lzo (macOS)
+      # Must come before pip install: python-lzo builds against it
+      run: brew install lzo
+      if: ${{ runner.os == 'macOS' }}
     - name: Install dependencies
       run: |
         pip install wheel
@@ -34,10 +50,9 @@ jobs:
       if: ${{ matrix.os == 'windows-latest' }}
     - name: Build Mac App
       run: |
-        brew install lzo
         cd cx_freeze
         python setup.py bdist_dmg
-      if: ${{ matrix.os == 'macos-13' || matrix.os == 'self-hosted'}}
+      if: ${{ runner.os == 'macOS' }}
     - name: Build Linux AppImage
       run: |
         pip install python-appimage
@@ -49,11 +64,11 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ matrix.os == 'windows-latest' && 'Windows' || matrix.os == 'macos-13' && 'MacOS (Intel)' || matrix.os == 'self-hosted' && 'MacOS (Apple M1)' }} App
+        name: ${{ matrix.label }} App
         path: |
           cx_freeze/dist/*
           cx_freeze/build/*.dmg
-      if: ${{ matrix.os == 'windows-latest' || matrix.os == 'macos-13' || matrix.os == 'self-hosted' }}
+      if: ${{ runner.os != 'Linux' }}
     - name: Upload Linux AppImage
       uses: actions/upload-artifact@v4
       with:

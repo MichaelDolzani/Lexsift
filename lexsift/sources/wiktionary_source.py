@@ -1,3 +1,5 @@
+import html
+from urllib.parse import quote
 import requests
 from bs4 import BeautifulSoup
 from ..models import DictionarySource, SourceOptions, LookupResult
@@ -30,7 +32,7 @@ class WiktionarySource(DictionarySource):
         try:
             res = cached_get(
                 'https://en.wiktionary.org/api/rest_v1/page/definition/' +
-                word)
+                quote(word, safe=''))
         except Exception as e:
             logger.error(f"Failed to get data from Wiktionary: {repr(e)}")
             return LookupResult(error=str(e))
@@ -45,7 +47,8 @@ class WiktionarySource(DictionarySource):
             meanings = []
             for defn in item['definitions']:
                 parsed_meaning = BeautifulSoup(defn['definition'], features="lxml")
-                meanings.append(parsed_meaning.text)
+                # .text decodes entities, so escape again before the result is joined into HTML
+                meanings.append(html.escape(parsed_meaning.text, quote=False))
 
             meaning_item = {"pos": item['partOfSpeech'], "meaning": meanings}
             definitions.append(meaning_item)

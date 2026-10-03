@@ -17,7 +17,7 @@ Lexsift is not packaged by any distribution yet. Run it from the AppImage distri
 
 <details markdown=1>
 <summary> Click to open instructions for advanced users </summary>
-If you prefer to install it as a Python package, you can use `pip3 install git+https://github.com/MichaelDolzani/Lexsift.git`. (**Note**: Newer versions of Python will stop you from installing into your global Python environment by default. You may need to create a virtual environment). This will install a desktop file which you should be able to see from your launcher menu. If you do not use a desktop environment, you can launch it through the command line `lexsift`.
+If you prefer to install it as a Python package, you can use `pip3 install git+https://github.com/MichaelDolzani/Lexsift.git`. MDX dictionary support is optional: install `lexsift[mdx]` instead (this needs the lzo library, e.g. `brew install lzo` or `apt install liblzo2-dev`). (**Note**: Newer versions of Python will stop you from installing into your global Python environment by default. You may need to create a virtual environment). This will install a desktop file which you should be able to see from your launcher menu. If you do not use a desktop environment, you can launch it through the command line `lexsift`.
 
 If you want to test the latest features, you can go to [CI artifacts page](https://nightly.link/MichaelDolzani/Lexsift/workflows/build-binaries/master) page to obtain the latest builds, but they are not guaranteed to run. If you notice anything wrong from those builds, open an issue on GitHub. Ensure you are using the latest nightly build before reporting anything.
 

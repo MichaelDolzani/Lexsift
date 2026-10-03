@@ -26,14 +26,20 @@ def findDBpath(path) -> str:
         raise FileNotFoundError("Cannot find vocabulary_builder.sqlite3")
 
 
+def koreader_metadata_path(book_path: str) -> str:
+    """Path of KOReader's metadata file for a book.
+    KOReader strips only the last extension for the sidecar folder and uses it in the file name:
+    book.epub -> book.sdr/metadata.epub.lua, book.fb2.zip -> book.fb2.sdr/metadata.zip.lua"""
+    base, ext = os.path.splitext(book_path)
+    return os.path.join(base + ".sdr", f"metadata{ext}.lua")
+
+
 def koreader_scandir(path):
     filelist = []
     for filetype in ["epub", "fb2", "fb2.zip", "pdf"]:
         files = glob.glob(os.path.join(path, "**/*." + filetype), recursive=True)
         for filename in files:
-            if os.path.exists(os.path.join(os.path.dirname(filename),
-                                           filename.removesuffix(filetype) + "sdr",
-                                           "metadata." + filetype.split(".")[-1] + ".lua")):
+            if os.path.exists(koreader_metadata_path(filename)):
                 filelist.append(filename)
     logger.info(f"Found {len(filelist)} book files in {path}: {filelist}")
     return filelist

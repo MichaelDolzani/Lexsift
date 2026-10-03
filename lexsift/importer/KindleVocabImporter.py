@@ -1,3 +1,4 @@
+import pathlib
 from .GenericImporter import GenericImporter
 from datetime import datetime as dt, timezone as tz
 import sqlite3
@@ -50,7 +51,10 @@ class KindleVocabImporter(GenericImporter):
         vocab_db_path = os.path.join(self.path, "system", "vocabulary", "vocab.db")
         clippings_path = os.path.join(self.path, "documents", "My Clippings.txt")
 
-        con = sqlite3.connect(vocab_db_path)
+        if not os.path.exists(vocab_db_path):
+            raise FileNotFoundError(f"Cannot find the Kindle vocabulary database at {vocab_db_path}")
+        # Read-only: never create or modify files on the device
+        con = sqlite3.connect(pathlib.Path(os.path.abspath(vocab_db_path)).as_uri() + "?mode=ro", uri=True)
         cur = con.cursor()
 
         try:

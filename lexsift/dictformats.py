@@ -1,6 +1,5 @@
 from typing import TextIO
 from loguru import logger
-from readmdict import MDX
 from bidict import bidict
 import os
 import re
@@ -131,7 +130,18 @@ def dictinfo(path) -> dict[str, str]:
         raise NotImplementedError("Unsupported format" + basename + ext)
 
 
+class MissingDependencyError(ImportError):
+    "An optional dependency needed for a dictionary format is not installed"
+
+
 def parseMDX(path) -> dict[str, str]:
+    # readmdict needs python-lzo, which has no wheels on some platforms, so MDX support is optional
+    try:
+        from readmdict import MDX
+    except (ImportError, SystemExit) as e:  # readmdict raises SystemExit when python-lzo is missing
+        raise MissingDependencyError(
+            "MDX dictionaries need the optional 'readmdict' and 'python-lzo' packages. "
+            "Install them with: pip install 'lexsift[mdx]'") from e
     mdx = MDX(path)
     stylesheet_lines = mdx.header[b'StyleSheet'].decode().splitlines()
     stylesheet_map: dict[int, str] = {}
@@ -169,7 +179,9 @@ def parseDSL(path) -> dict[str, str]:
     """
     with dslopen(path) as f:  # type:ignore
         lines: list[str] = f.readlines()  # type:ignore
-    allLines = "".join(lines[5:])
+    # Drop the BOM, the #-directive header and blank lines instead of assuming a fixed-size header
+    allLines = "".join(line for line in (ln.lstrip("﻿") for ln in lines)
+                       if line.strip() and not line.startswith("#"))
     allLines = allLines.replace("[", "<")
     allLines = allLines.replace("]", ">")
     allLines = allLines.replace("{{", "<")
@@ -184,22 +196,24 @@ def parseDSL(path) -> dict[str, str]:
     allLines = allLines.replace("&quot;", '"')
     allLines = allLines.replace("{}", "")
 
+    def clean(defi: str) -> str:
+        return re.sub(r'(\d+\.)<br>\s*(\D+)', r'\1 \2', defi).removesuffix("<br>").strip()
+
     current_term = ""
     current_defi = ""
     data = {}
-    items = []
     for item in allLines.splitlines():
-        if not item.startswith("#") and not item.startswith("\t") and not item.startswith(" "):
-            data[current_term] = re.sub(r'(\d+\.)<br>\s*(\D+)', r'\1 \2', current_defi)\
-                                   .removesuffix("<br>").strip()
-
+        if not item.startswith("\t") and not item.startswith(" "):
+            if current_term:
+                data[current_term] = clean(current_defi)
             current_defi = ""
             current_term = item
-        if item.startswith("\t") or item.startswith(" "):
-            items.append(item)
+        else:
             if item.endswith(".wav"):  # Don't include audio file names
                 continue
             current_defi += item.lstrip().replace("~", current_term) + "<br>"
+    if current_term:
+        data[current_term] = clean(current_defi)
 
     return data
 

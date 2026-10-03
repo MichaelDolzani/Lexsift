@@ -1,5 +1,6 @@
 from ast import parse
-from flask import Flask, render_template, flash, request, redirect, url_for, send_from_directory
+from flask import Flask, abort, render_template, flash, request, redirect, url_for, send_from_directory
+from werkzeug.security import safe_join
 from waitress import serve
 from requests import get
 import os
@@ -50,8 +51,12 @@ class ReaderServer(QObject):
             books_dir = settings.value("books_dir")
             if not books_dir:
                 return "No books directory set"
+            # Only read books inside the books folder, not any path the URL names
+            book_path = safe_join(books_dir, path)
+            if book_path is None or not os.path.isfile(book_path):
+                abort(404)
             book_url = url_for('send_epub', path=path)
-            metadata = getEpubMetadata(os.path.join(books_dir, path))
+            metadata = getEpubMetadata(book_path)
             return render_template('read.html',
                                    book_url=book_url,
                                    book_title=metadata['title'],

@@ -1,3 +1,4 @@
+import html
 from PyQt5.QtGui import QWheelEvent
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton, QHBoxLayout
 from PyQt5.QtCore import Qt, pyqtSignal, QThread, QObject, pyqtSlot
@@ -275,7 +276,7 @@ class MultiDefinitionWidget(SearchableTextEdit):
     def toAnki(self, defi: Optional[Definition] = None) -> str:
         """Process definitions before sending to Anki"""
         # Figure out display mode of current source
-        maybe_user_typed_text = self.toPlainText().replace("\n", "<br>")
+        maybe_user_typed_text = html.escape(self.toPlainText(), quote=False).replace("\n", "<br>")
         if defi is not None:  # for non-interactive use
             self.setCurrentDefinition(defi)
         if self.currentDefinition is None:  # This means no definition is found but maybe the user typed in something

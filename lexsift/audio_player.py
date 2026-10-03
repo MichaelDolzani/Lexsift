@@ -1,5 +1,4 @@
 import os
-from threading import Thread
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtCore import QUrl
 from typing import Dict
@@ -15,7 +14,7 @@ class AudioPlayer:
     def crossplatform_play_sound(self, path):
         content = QUrl.fromLocalFile(path)
         self.player.setMedia(QMediaContent(content))
-        Thread(target=self.player.play).start()
+        self.player.play()  # non-blocking; QObjects must not be used from other threads
 
     def play_audio(self, name: str, data: Dict[str, str], lang: str) -> str:
         audiopath: str = data.get(name, "")

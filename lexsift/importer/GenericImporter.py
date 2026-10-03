@@ -1,3 +1,4 @@
+import html
 from PyQt5.QtWidgets import (QDialog, QFormLayout, QLabel, QComboBox, QWidget,
                              QVBoxLayout, QCheckBox, QScrollArea, QPushButton,
                              QProgressBar, QSizePolicy, QApplication)
@@ -172,9 +173,10 @@ class GenericImporter(QDialog):
             # Remove punctuations
             word = remove_punctuations(note.lookup_term)
             if settings.value("bold_word", True, type=bool):
-                sentence = note.sentence.replace(word, f"<strong>{word}</strong>")
+                sentence = html.escape(note.sentence, quote=False).replace(
+                    html.escape(word, quote=False), f"<strong>{html.escape(word, quote=False)}</strong>")
             else:
-                sentence = note.sentence
+                sentence = html.escape(note.sentence, quote=False)
 
             definition1 = defi1.getFirstDefinition(word)
             if definition2_enabled:

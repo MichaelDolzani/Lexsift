@@ -1,5 +1,6 @@
 from .searchable_text_edit import SearchableTextEdit
 from ..global_names import logger
+import html
 import re
 
 
@@ -18,8 +19,10 @@ class SearchableBoldableTextEdit(SearchableTextEdit):
         self.setTextCursor(cursor)
 
     def toAnki(self):
+        # The sentence is plain text (often copied from a web page), so escape it before adding markup
+        result = html.escape(self.toPlainText(), quote=False)
         # substitute __word__ with <b>word</b>
-        result = re.sub(r'__(.*?)__', r'<b>\1</b>', self.toPlainText())
+        result = re.sub(r'__(.*?)__', r'<b>\1</b>', result)
         # substitute newlines with <br>
         result = result.replace('\n', '<br>')
         return result

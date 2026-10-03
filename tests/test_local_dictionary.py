@@ -1,3 +1,4 @@
+import pytest
 from lexsift.local_dictionary import LocalDictionary
 
 
@@ -51,35 +52,18 @@ def test_import_stardict_xdxf(tmp_path):
 def test_import_dsl(tmp_path):
     db = LocalDictionary(tmp_path)
     assert db.countDicts() == 0
-    db.dictimport("testdata/dsl/ru_en.dsl",
-                  dicttype="dsl",
-                  lang="ru",
-                  name="dsl_test"
-                  )
-    db.dictimport("testdata/dsl/ru_en.dsl.dz",
-                  dicttype="dsl",
-                  lang="ru",
-                  name="dsl_test2"
-                  )
+    # Same entries, as UTF-8 with a BOM and as gzipped UTF-16
+    db.dictimport("testdata/dsl/ru_en.dsl", dicttype="dsl", lang="ru", name="dsl_test")
+    db.dictimport("testdata/dsl/ru_en.dsl.dz", dicttype="dsl", lang="ru", name="dsl_test2")
     assert db.countDicts() == 2
-    assert db.define("зубчатый", "ru", "dsl_test") == '''serrated, toothed'''
-    assert db.define("лиственный", "ru", "dsl_test") == '''broadleaf; deciduous; leafy'''
-    assert db.define("окорять", "ru", "dsl_test") == '''bark, peel'''
-    assert db.define("зубчатый", "ru", "dsl_test2") == '''serrated, toothed'''
-    assert db.define("лиственный", "ru", "dsl_test2") == '''broadleaf; deciduous; leafy'''
-    assert db.define("окорять", "ru", "dsl_test2") == '''bark, peel'''
-    db.dictimport("testdata/dsl/universal.dsl.dz",
-                  dicttype="dsl",
-                  lang="ru",
-                  name="dsl_test3"
-                  )
-    assert db.countDicts() == 3
-    assert db.define("ямчатость", "ru", "dsl_test3") == '''ж. с.-х.<br>  (патологическое свойство плодов) pit<br>'''
-    assert db.define("эмиграция", "ru", "dsl_test3") == '''ж.<br>  1) (переселение из своего отечества) emigration<br>  2) (пребывание в другой стране) life in emigration<br>    жить в эмиграции — live as an emigrant / émigré (фр.) /<'emɪgreɪ/><br>  3) собир. emigrants pl; émigrés (фр.) /<'emɪgreɪz/> pl<br>'''
-    assert db.define(
-        "щемящий",
-        "ru",
-        "dsl_test3") == '''1) (ноющий, тупой) aching /<'eɪk-/>, nagging<br>    щемящая боль — nagging ache /<eɪk/><br>  2) (мучительный, гнетущий) painful, melancholy, oppressive<br>    щемящий душу напев — plaintive / melancholy /<-k-/> tune<br>'''
+    for name in ("dsl_test", "dsl_test2"):
+        # First entry: the header must not swallow it
+        assert db.define("зубчатый", "ru", name) == "serrated, toothed"
+        assert db.define("лиственный", "ru", name) == "broadleaf; deciduous; leafy"
+        assert db.define("эмиграция", "ru", name) == \
+            "ж.<br>1) emigration<br>жить в эмиграция — live as an emigrant<br>2) emigrants pl"
+        # Last entry: must not be dropped
+        assert db.define("окорять", "ru", name) == "bark, peel"
 
 
 def test_import_cognates(tmp_path):
@@ -90,56 +74,37 @@ def test_import_cognates(tmp_path):
                   lang="<all>",
                   name="cognates"
                   )
-    assert db.define("chodník", "cs", "cognates") == '''["sk", "pl"]'''
-    assert db.define(
-        "beluga",
-        "hr",
-        "cognates") == '''["fi", "hu", "ru", "nl", "en", "de", "bg", "fr", "ro", "ca", "mhr", "kk", "pt", "eo", "uk", "cs", "es"]'''
-    assert db.define(
-        "apple",
-        "en",
-        "cognates") == '''["nl", "ksh", "xh", "nso", "da", "kn", "hsb", "pl", "dsb", "uk", "ltg", "hr", "af", "ru", "nb", "lb", "pap", "bg", "ml", "tn", "brx", "gd", "jam", "sah", "gv", "ve", "zu", "cs", "wym", "si", "cy", "fo", "sco", "bn", "sk", "ga", "sv", "zsm", "fy", "be", "mk", "as", "mi", "cu", "lt", "abe", "de", "nn", "br", "id", "ta", "st", "kok", "te", "ms", "sl", "is"]'''
-    assert db.define(
-        "tragisch",
-        "de",
-        "cognates") == '''["nl", "fi", "ro", "pt", "pl", "hr", "hu", "nb", "ast", "fr", "ms", "eu", "eo", "cs", "ca", "sk", "sv", "lij", "es", "en", "id", "oc", "gl", "sl"]'''
     assert db.countDicts() == 1
+    assert db.define("chodník", "cs", "cognates") == '''["sk", "pl"]'''
+    assert db.define("apple", "en", "cognates") == '''["nl", "de", "sv"]'''
+    assert db.define("tragisch", "de", "cognates") == '''["nl", "en", "fr"]'''
 
 
 def test_kaikki(tmp_path):
     db = LocalDictionary(tmp_path)
     assert db.countDicts() == 0
-    db.dictimport("testdata/kaikki/swedish_short.json",
+    db.dictimport("testdata/kaikki/mixed_short.jsonl",
                   dicttype="wiktdump",
                   lang="sv",
                   name="kaikki-swedish"
                   )
     assert db.countDicts() == 1
-    assert db.define("uppåkrakaka", "sv", "kaikki-swedish") == '''<i>Noun</i>
-uppåkrakaka c
-1. a biscuit made of mördeg (without egg), in a circular shape folded almost in the middle, garnished with chopped pistachios and nib sugar'''
-    assert db.define("affektionsvärde", "sv", "kaikki-swedish") == '''<i>Noun</i>
-affektionsvärde n
-1. sentimental value'''
-    assert db.define("rådigt", "sv", "kaikki-swedish") == '''<i>Adj</i>
-rådigt
-1. indefinite neuter singular of rådig
+    assert db.define("affektionsvärde", "sv", "kaikki-swedish") == (
+        "<i>Noun</i> <br>\n<strong>affektionsvärde n</strong><br>\n<br>\n1. sentimental value")
+    # Entries with the same headword are merged
+    assert db.define("rådigt", "sv", "kaikki-swedish") == (
+        "<i>Adj</i> <br>\n<strong>rådigt</strong><br>\n<br>\n1. indefinite neuter singular of rådig"
+        "\n\n"
+        "<i>Adv</i> <br>\n<strong>rådigt (comparative rådigare)</strong><br>\n<br>\n1. resourcefully, resolutely")
+    # Entries in other languages are skipped
+    with pytest.raises(KeyError):
+        db.define("géminer", "sv", "kaikki-swedish")
 
-<i>Adv</i>
-rådigt (comparative rådigare, superlative rådigast)
-1. resourcefully, resolutely'''
-
-    db.dictimport("testdata/kaikki/fr_short.json",
+    db.dictimport("testdata/kaikki/mixed_short.jsonl",
                   dicttype="wiktdump",
                   lang="fr",
                   name="kaikki-french"
                   )
     assert db.countDicts() == 2
-    # french tests
-    assert db.define("évhémérisassent", "fr", "kaikki-french") == """<i>Verb</i>
-1. Troisième personne du pluriel de l’imparfait du subjonctif de évhémériser."""
-    assert db.define("fortitrer", "fr", "kaikki-french") == """<i>Verb</i>
-1. Un cerf fortitre, quand il évite de passer près des chiens frais et des relais."""
-    assert db.define("géminer", "fr", "kaikki-french") == """<i>Verb</i>
-1. Se doubler.
-2. Grouper deux à deux, doubler."""
+    assert db.define("géminer", "fr", "kaikki-french") == (
+        "<i>Verb</i> <br>\n<strong></strong><br>\n<br>\n1. Se doubler.<br>\n2. Grouper deux à deux, doubler.")

@@ -49,9 +49,17 @@ def request(action, **params):
     return {'action': action, 'params': params, 'version': 6}
 
 
+# Seconds to wait for AnkiConnect. Without a timeout, an Anki blocked by a modal dialog hangs Lexsift forever.
+ANKI_TIMEOUT = 10
+# Bulk queries over a whole collection can legitimately take longer
+ANKI_BULK_TIMEOUT = 120
+_ANKI_BULK_ACTIONS = {'notesInfo', 'findNotes', 'findCards', 'canAddNotes', 'addNotes', 'answerCards'}
+
+
 def invoke(action, server, **params):
     requestJson = json.dumps(request(action, **params)).encode('utf-8')
-    with urllib.request.urlopen(urllib.request.Request(server, requestJson)) as response:
+    timeout = ANKI_BULK_TIMEOUT if action in _ANKI_BULK_ACTIONS else ANKI_TIMEOUT
+    with urllib.request.urlopen(urllib.request.Request(server, requestJson), timeout=timeout) as response:
         response = json.load(response)
     if len(response) != 2:
         raise Exception('response has an unexpected number of fields')
@@ -62,6 +70,15 @@ def invoke(action, server, **params):
     if response['error'] is not None:
         raise Exception(response['error'])
     return response['result']
+
+
+def anki_field_query(field: str, value: str) -> str:
+    """Build an exact-match Anki search for field:value.
+    Backslashes and quotes would break the quoted term, and * and _ are wildcards
+    that would match other notes, so escape all four."""
+    def esc(text: str) -> str:
+        return re.sub(r'([\\"*_])', r'\\\1', text)
+    return f'"{esc(field)}:{esc(value)}"'
 
 
 def getDeckList(server) -> list:
