@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import QLabel
 from slpp import slpp
 from typing import TYPE_CHECKING
 from .GenericImporter import GenericImporter
-from .utils import koreader_scandir, findDBpath, findHistoryPath
+from .utils import koreader_scandir, koreader_metadata_path, findDBpath, findHistoryPath
 from .models import ReadingNote
 from ..models import LookupRecord
 from ..global_names import settings, logger
@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
 def getBookMetadata(path):
     _, ext = os.path.splitext(path)
-    notepath = os.path.join(path.removesuffix(ext) + ".sdr", f"metadata{ext}.lua")
+    notepath = koreader_metadata_path(path)
 
     with open(notepath, encoding='utf8') as f:
         data = slpp.decode(" ".join("\n".join(f.readlines()[1:]).split(" ")[1:]))
