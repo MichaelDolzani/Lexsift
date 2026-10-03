@@ -31,6 +31,7 @@ from .contentmanager import ContentManager
 from .tools import (
     compute_word_score,
     failCards,
+    anki_field_query,
     is_json,
     make_audio_source_group,
     modelFieldNames,
@@ -762,12 +763,12 @@ class MainWindow(MainWindowBase):
         if fields[0] == settings.value("word_field"):
             logger.info(
                 f'First field is word field, trying to find a note with field "{fields[0]}" having value "{word}"')
-            find_query = f"\"{fields[0]}:{word}\""
+            find_query = anki_field_query(fields[0], word)
             self.note_type_first_field = "word"
         elif fields[0] == settings.value("sentence_field"):
             logger.info(
                 f'First field is sentence field, trying to find a note with field "{fields[0]}" having value "{sentence}"')
-            find_query = f"\"{fields[0]}:{sentence}\""
+            find_query = anki_field_query(fields[0], sentence)
             self.note_type_first_field = "sentence"
         else:
             logger.error(f"First field is neither word field nor sentence field, skipping checking for duplicates")

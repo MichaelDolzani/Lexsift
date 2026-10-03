@@ -72,6 +72,15 @@ def invoke(action, server, **params):
     return response['result']
 
 
+def anki_field_query(field: str, value: str) -> str:
+    """Build an exact-match Anki search for field:value.
+    Backslashes and quotes would break the quoted term, and * and _ are wildcards
+    that would match other notes, so escape all four."""
+    def esc(text: str) -> str:
+        return re.sub(r'([\\"*_])', r'\\\1', text)
+    return f'"{esc(field)}:{esc(value)}"'
+
+
 def getDeckList(server) -> list:
     result = invoke('deckNames', server)
     return list(result)

@@ -45,3 +45,14 @@ def test_invoke_times_out_instead_of_hanging(anki_server, monkeypatch):
     with pytest.raises((socket.timeout, TimeoutError, OSError)):
         tools.invoke("version", anki_server)
     assert time.time() - start < 0.9
+
+
+def test_field_query_plain():
+    assert tools.anki_field_query("Word", "Hund") == '"Word:Hund"'
+
+
+def test_field_query_escapes_quotes_wildcards_and_backslashes():
+    assert tools.anki_field_query("Word", 'say "hi"') == r'"Word:say \"hi\""'
+    assert tools.anki_field_query("Word", "a*b_c") == r'"Word:a\*b\_c"'
+    assert tools.anki_field_query("Word", "back\\slash") == r'"Word:back\\slash"'
+    assert tools.anki_field_query("Word", "12:30") == '"Word:12:30"'
